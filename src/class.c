@@ -201,6 +201,31 @@ static void test_styles(void)
     check_style("#32772", 1, 0, 0);     /* icon title */
 }
 
+static const struct
+{
+    const char name[9];
+    int value;
+} extra_values[] =
+{
+    {"#32770",30}, /* Dialog */
+    {"Edit",6},
+};
+
+static void test_extra_values(void)
+{
+    int i;
+    for(i=0; i< sizeof(extra_values)/sizeof(extra_values[0]); i++)
+    {
+        WNDCLASS wc;
+        BOOL ret = GetClassInfo(NULL,extra_values[i].name,&wc);
+
+        ok( ret, "GetClassInfo (0) failed for global class %s\n", extra_values[i].name);
+        if (!ret) continue;
+        ok(extra_values[i].value == wc.cbWndExtra,
+           "expected %d, got %d\n", extra_values[i].value, wc.cbWndExtra);
+    }
+}
+
 START_TEST(class)
 {
     HANDLE hInstance = GetModuleHandle("kernel");
@@ -208,5 +233,6 @@ START_TEST(class)
     test_Class(hInstance, FALSE);
     test_Class(hInstance, TRUE);
     test_styles();
+    test_extra_values();
 	//test_instances();
 }
